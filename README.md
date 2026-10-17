@@ -18,7 +18,7 @@ source .venv/bin/activate
 
 `python app.py`
 
-### Test the app
+### Example requests for endpoints
 
 `curl -X "GET" http://localhost:5000/health`
--> should return 'OK'
+`curl -X "POST" -F "file=@contract.pdf" http://127.0.0.1:5000/api/contracts`
