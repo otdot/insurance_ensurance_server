@@ -25,3 +25,6 @@ source .venv/bin/activate
 
 ### Building static files
 Place static files under ./static folder with index.html as entrypoint 
+`curl -X "POST" -H "Content-Type: application/json" -d '{"product_name": "XXX", "desc": "this is a description", "value": 2500}' http://127.0.0.1:5000/api/products`
+`curl -X "GET" http://localhost:5000/products`
+`curl -X "GET" http://localhost:5000/products/1`
