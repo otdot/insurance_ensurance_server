@@ -21,4 +21,4 @@ source .venv/bin/activate
 ### Example requests for endpoints
 
 `curl -X "GET" http://localhost:5000/health`
-`curl -X "POST" -F "file=@contract.pdf" http://127.0.0.1:5000/api/contracts`
+`curl -X "POST" -F "file=@home_insurance1.pdf" http://127.0.0.1:5000/api/contracts`
