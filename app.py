@@ -62,5 +62,53 @@ def request_too_large(_error):
     return jsonify(error="Request exceeds the 16 MB upload limit."), 413
 
 
-if __name__ == "__main__":
+@app.route('/api/products', methods=['POST'])
+def create_product():
+    data = request.get_json(silent=True)
+    if not data or not data.get("product_name"):
+        return jsonify(error="JSON body with a 'name' field is required"), 400
+ 
+    with closing(sqlite3.connect(DATABASE_PATH)) as connection:
+        with connection:
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS products (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    product_name TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    value INTEGER NOT NULL
+                )
+                """
+            )
+            cursor = connection.execute(
+                """
+                INSERT INTO products (product_name, description, value)
+                VALUES (?, ?, ?)
+                """, (data.get("product_name"), data.get("desc"), data.get("value"))
+            )
+            product_id = cursor.lastrowid
+    
+    return jsonify(
+        id=product_id,
+        product_name=data.get("product_name"),
+        description=data.get("desc"),), 201
+
+@app.get("/products")
+def list_items():
+    with closing(sqlite3.connect(DATABASE_PATH)) as connection:
+        connection.row_factory = sqlite3.Row
+        rows = connection.execute("SELECT * FROM products ORDER BY id").fetchall()
+    return jsonify([dict(r) for r in rows])
+ 
+ 
+@app.get("/products/<int:item_id>")
+def get_item(item_id):
+    with closing(sqlite3.connect(DATABASE_PATH)) as connection:
+        connection.row_factory = sqlite3.Row
+        row = connection.execute("SELECT * FROM products WHERE id = ?", (item_id,)).fetchone()
+        if row is None:
+            return jsonify(error="product not found"), 404
+    return jsonify(dict(row))
+
+if __name__ == '__main__':
     app.run(debug=True)
