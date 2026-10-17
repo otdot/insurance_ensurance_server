@@ -71,8 +71,16 @@ def request_too_large(_error):
 @app.route('/api/products', methods=['POST'])
 def create_product():
     data = request.get_json(silent=True)
-    if not data or not data.get("product_name"):
-        return jsonify(error="JSON body with a 'name' field is required"), 400
+    
+    if not isinstance(data, dict):
+        return jsonify(error="JSON object body is required"), 400
+
+    if not data.get("product_name"):
+        return jsonify(error="'product_name' is required"), 400
+    if data.get("desc") is None:
+        return jsonify(error="'desc' is required"), 400
+    if data.get("value") is None:
+        return jsonify(error="'value' is required"), 400
  
     with closing(sqlite3.connect(DATABASE_PATH)) as connection:
         with connection:
