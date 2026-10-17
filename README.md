@@ -22,3 +22,6 @@ source .venv/bin/activate
 
 `curl -X "GET" http://localhost:5000/health`
 `curl -X "POST" -F "file=@home_insurance1.pdf" http://127.0.0.1:5000/api/contracts`
+
+### Building static files
+Place static files under ./static folder with index.html as entrypoint 

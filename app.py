@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import sqlite3
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -12,9 +12,15 @@ app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 Path(app.instance_path).mkdir(parents=True, exist_ok=True)
 DATABASE_PATH = Path(app.instance_path) / "insurance.db"
 
+@app.route("/", defaults={"filename": "index.html"})
+@app.route("/<path:filename>")
+def serve_static(filename):
+    return send_from_directory(app.static_folder, filename)
+
+
 @app.route("/health", methods=["GET"])
 def health_check():
-    return "OK", 200
+    return "OK", 200    
 
 @app.route("/api/contracts", methods=["POST"])
 def upload_contract():
